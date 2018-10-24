@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:context="http://www.springframework.org/schema/data/repository"
+       xsi:schemaLocation="http://www.springframework.org/schema/data/mongo
+        http://www.springframework.org/schema/data/mongo/spring-mongo.xsd
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/util
+		http://www.springframework.org/schema/util/spring-util.xsd
+		http://www.springframework.org/schema/data/repository
+		http://www.springframework.org/schema/data/repository/spring-repository.xsd">
+
+
+    <!--<context:property-placeholder location="classpath:db.properties" />-->
+
+    <!-- 映射转换器，扫描back-package目录下的文件，根据注释，把它们作为mongodb的一个collection的映射 -->
+    <mongo:mapping-converter base-package="com.iths.demo.mongo.entity" />
+
+    <!-- mongodb bean的仓库目录，会自动扫描扩展了MongoRepository接口的接口进行注入 -->
+    <mongo:repositories base-package="com.iths.demo.mongo.repository">
+        <context:include-filter type="regex" expression=".*Repository" />
+    </mongo:repositories>
+
+    <mongo:mongo-client id="mongo" host="10.151.30.122"
+                        credentials="profile:ku12ani88@profile" port="27017">
+        <!-- connectionsPerHost：允许连接的最大连接数 -->
+        <!-- threadsAllowedToBlockForConnectionMultiplier：此参数乘以connectionsPerHost的结果为一个线程变为可用的最大阻塞数，超过此乘机数之后的所有线程将及时获取一个异常 -->
+        <!-- slaveOk：为true，读写分离 -->
+        <mongo:client-options connections-per-host="10"
+                              threads-allowed-to-block-for-connection-multiplier="5"
+                              connect-timeout="100000" max-wait-time="120000"
+                              socket-keep-alive="true" socket-timeout="0"/>
+    </mongo:mongo-client>
+
+    <mongo:db-factory id="mongoDbFactory" dbname="profile" mongo-ref="mongo" />
+
+    <bean id="mappingContext" class="org.springframework.data.mongodb.core.mapping.MongoMappingContext" />
+
+    <!-- 配置mongodb映射类型 -->
+    <bean id="mappingMongoConverter"
+          class="org.springframework.data.mongodb.core.convert.MappingMongoConverter">
+        <constructor-arg name="mongoDbFactory" ref="mongoDbFactory" />
+        <constructor-arg name="mappingContext" ref="mappingContext" />
+        <property name="typeMapper" ref="defaultMongoTypeMapper" />
+    </bean>
+
+    <!-- 默认Mongodb类型映射 -->
+    <bean id="defaultMongoTypeMapper"
+          class="org.springframework.data.mongodb.core.convert.DefaultMongoTypeMapper">
+        <constructor-arg name="typeKey">
+            <null />
+            <!-- 这里设置为空,可以把 spring data mongodb 多余保存的_class字段去掉 -->
+        </constructor-arg>
+    </bean>
+
+    <bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
+        <constructor-arg ref="mongoDbFactory" />
+        <constructor-arg ref="mappingMongoConverter" />
+        <property name="writeConcern">
+            <util:constant static-field="com.mongodb.WriteConcern.SAFE" />
+        </property>
+    </bean>
+
+</beans>
