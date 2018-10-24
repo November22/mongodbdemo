@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/mvc
+		http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <bean id="commonsConfigurationPropertyPlaceholder"
+          class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="order" value="1" />
+        <property name="ignoreUnresolvablePlaceholders" value="true" />
+        <property name="properties" ref="commonsConfigurationFactoryBean" />
+    </bean>
+
+    <bean name="commonsConfigurationFactoryBean"
+          class="org.springmodules.commons.configuration.CommonsConfigurationFactoryBean">
+        <constructor-arg ref="databaseConfiguration" />
+    </bean>
+
+    <bean id="databaseConfiguration" class="org.apache.commons.configuration.DatabaseConfiguration">
+        <constructor-arg type="javax.sql.DataSource">
+            <bean class="com.iths.demo.utils.DataSourceFactoryBean"/>
+        </constructor-arg>
+        <constructor-arg index="1" value="configuration"/>
+        <constructor-arg index="2" value="name"/>
+        <constructor-arg index="3" value="value"/>
+    </bean>
+
+</beans>
