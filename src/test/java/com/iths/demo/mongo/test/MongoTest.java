@@ -20,7 +20,7 @@ public class MongoTest extends AbstractJUnit4SpringContextTests {
     @Test
     public void testSave(){
         OperationLogBO operationLogBO = new OperationLogBO();
-        operationLogBO.setId("2019");
+        operationLogBO.setId("2020");
         operationLogBO.setName("wahaha");
         operationLogBO.setOperation("operationReview");
         service.save(operationLogBO);

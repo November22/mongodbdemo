@@ -1,8 +1,10 @@
 package com.iths.demo.mongo.service.impl;
 
 import com.iths.demo.mongo.bo.OperationLogBO;
+import com.iths.demo.mongo.entity.OperationLog;
 import com.iths.demo.mongo.repository.OperationLogRepository;
 import com.iths.demo.mongo.service.OperationLogService;
+import com.iths.demo.utils.BeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
@@ -22,7 +24,8 @@ public class OperationLogServiceImpl implements OperationLogService {
 
     @Override
     public void save(OperationLogBO operationLogBO) {
-        mongoTemplate.save(operationLogBO,"test");
+        OperationLog operationLog = BeanMapper.map(operationLogBO, OperationLog.class);
+        repository.save(operationLog);
     }
 
     @Override
