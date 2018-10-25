@@ -24,8 +24,8 @@
         <context:include-filter type="regex" expression=".*Repository" />
     </mongo:repositories>
 
-    <mongo:mongo-client id="mongo" host="10.151.30.122"
-                        credentials="profile:ku12ani88@profile" port="27017">
+    <mongo:mongo-client id="mongo" host="${settings.mongodb.host}"
+                        credentials="${settings.mongodb.username}:${settings.mongodb.password}@${settings.mongodb.database}" port="27017">
         <!-- connectionsPerHost：允许连接的最大连接数 -->
         <!-- threadsAllowedToBlockForConnectionMultiplier：此参数乘以connectionsPerHost的结果为一个线程变为可用的最大阻塞数，超过此乘机数之后的所有线程将及时获取一个异常 -->
         <!-- slaveOk：为true，读写分离 -->
